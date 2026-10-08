@@ -1,1 +1,1 @@
-# Shiro Arata – 研究者サイト
+Shiro Arata – 研究者サイト
