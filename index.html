@@ -11,8 +11,268 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
+  <style>
+    /* The fallback is lower priority than the website's existing style.css.
+       It keeps this HTML presentable when opened on its own. */
+    @layer site-fallback {
+/* Existing design reference: layout-only fallback for local preview. */
+:root {
+  --bg: #fafaf8;
+  --ink: #192621;
+  --muted: #53635c;
+  --emerald: #087865;
+  --emerald-wash: #eaf3ef;
+  --rule: #d4dcd6;
+  --content-width: 1030px;
+  --font: "Inter", "Noto Sans JP", "Noto Sans CJK JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 18px; }
+body {
+  margin: 0; color: var(--ink); background: transparent;
+  font-family: var(--font); font-size: 17px; line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+button { font: inherit; }
+a:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--emerald); outline-offset: 4px;
+}
+::selection { background: #cce8dc; color: var(--ink); }
+.container { width: min(var(--content-width), calc(100% - 80px)); margin-inline: auto; }
+.skip-link { position: fixed; top: -110px; left: 12px; background: var(--emerald); padding: 10px 16px; color: #fff; z-index: 1000; }
+.skip-link:focus { top: 10px; }
+
+/* Site navigation. No decorative brand mark. */
+.site-header { border-bottom: 1px solid var(--rule); }
+.header-inner { display: flex; justify-content: flex-end; align-items: center; min-height: 73px; }
+.site-nav { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(20px, 3.8vw, 43px); }
+.site-nav a { font-size: 14px; font-weight: 500; letter-spacing: .005em; text-decoration: none; }
+.site-nav a:hover, .lab-link:hover, .profile-links a:hover, .footer-inner a:hover { color: var(--emerald); }
+
+/* Profile: restrained and editorial, not a full-screen title */
+.hero {
+  display: grid; grid-template-columns: minmax(0, 1fr) 198px;
+  align-items: center; gap: clamp(30px, 6vw, 85px);
+  min-height: 345px; padding-block: 67px 73px;
+}
+.hero-copy { min-width: 0; }
+.affiliation { margin: 0 0 22px; color: var(--muted); font-size: 15px; font-weight: 500; letter-spacing: .012em; }
+.hero h1 { margin: 0; font-size: clamp(29px, 3vw, 36px); line-height: 1.35; font-weight: 600; letter-spacing: .045em; }
+.name-en { display: block; margin-top: 8px; color: var(--muted); font-size: 17px; font-weight: 400; letter-spacing: -.02em; }
+.specialty { font-size: 15px; line-height: 1.75; margin: 25px 0 8px; }
+.specialty span { color: var(--muted); padding-inline: 4px; }
+.lab-link { font-size: 14px; text-decoration: none; color: var(--muted); border-bottom: 1px solid transparent; }
+.lab-link:hover { border-bottom-color: var(--emerald); }
+.lab-link span { color: var(--emerald); font-size: 12px; padding-left: 2px; }
+.profile-links { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 24px; margin-top: 25px; }
+.profile-links a { font-size: 13px; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 5px; }
+.profile-links a span { font-size: 11px; color: var(--emerald); padding-left: 2px; }
+.portrait {
+  width: 196px; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 50%;
+  border: 1.5px solid var(--emerald); margin: 0; background: #e9efea; justify-self: end;
+}
+.portrait img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+/* Shared sections */
+.section { border-top: 1px solid var(--rule); }
+.section-grid { display: grid; grid-template-columns: 205px minmax(0,1fr); column-gap: 62px; padding-block: 68px 84px; }
+.section-heading { display: flex; align-items: baseline; gap: 12px; }
+.section-num { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--emerald); letter-spacing: .035em; }
+.section-heading h2 { margin: 0; font-size: 28px; line-height: 1.15; font-weight: 600; letter-spacing: -.05em; }
+.section-content { min-width: 0; }
+
+/* Inline research accordion, no pop-up */
+.research-list { border-bottom: 1px solid var(--rule); }
+.research-panel { border-top: 1px solid var(--rule); }
+.research-summary {
+  list-style: none; display: grid; grid-template-columns: 30px minmax(0, 1fr) 26px;
+  gap: 20px; align-items: start; padding: 24px 0 25px; cursor: pointer;
+  transition: color .18s ease, background-color .18s ease;
+}
+.research-summary::-webkit-details-marker { display: none; }
+.research-summary::marker { content: ''; }
+.research-summary:hover .research-title { color: var(--emerald); }
+.research-index { color: var(--emerald); font-size: 13px; line-height: 2.2; font-weight: 600; font-variant-numeric: tabular-nums; }
+.research-title { font-size: 18px; font-weight: 500; line-height: 1.8; transition: color .18s ease; }
+.research-toggle { justify-self: end; color: var(--emerald); font-size: 23px; font-weight: 400; line-height: 1.35; }
+.research-panel[open] .research-toggle { transform: rotate(45deg); }
+.research-panel[open] .research-summary { padding-bottom: 18px; }
+.research-expanded { border-left: 2px solid var(--emerald); padding: 15px 0 30px 26px; margin: 0 0 24px 50px; }
+.pdf-area { display: grid; justify-items: start; }
+.slide-gallery { width: 100%; display: grid; gap: 16px; }
+.slide-image { display: block; width: 100%; border: 1px solid var(--rule); background: #fff; }
+.slide-image img { width: 100%; height: auto; display: block; }
+.slide-image:hover { border-color: var(--emerald); }
+.pdf-link { color: var(--emerald); text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: .012em; border-bottom: 1px solid currentColor; margin: 14px 0 0; }
+.pdf-link span { font-size: 11px; }
+.related-block { margin-top: 30px; }
+.related-block h3 { margin: 0 0 14px; font-size: 14px; font-weight: 600; letter-spacing: -.01em; }
+.related-list { list-style: none; margin: 0; padding: 0; }
+.related-list li { display: grid; grid-template-columns: 44px minmax(0,1fr); gap: 18px; padding: 13px 0; border-top: 1px solid var(--rule); line-height: 1.6; font-size: 14.5px; }
+.related-year { font-size: 12px; font-weight: 500; color: var(--muted); padding-top: 4px; }
+.related-list li a { text-decoration: none; }
+.related-list li a:hover { color: var(--emerald); }
+.related-doi { color: var(--muted); display: block; font-size: 12px; overflow-wrap: anywhere; margin-top: 4px; }
+.ext-arrow { color: var(--emerald); font-size: .8em; font-weight: 500; white-space: nowrap; margin-left: 6px; }
+
+/* Year controls: tabs as editorial type rather than pills/cards */
+.year-controls { display: flex; flex-wrap: wrap; gap: 5px 24px; border-bottom: 1px solid var(--rule); margin: -3px 0 0; }
+.year-button {
+  background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
+  color: var(--muted); padding: 0 0 15px; cursor: pointer;
+  font-family: var(--font); font-weight: 500; font-size: 18px; line-height: 1.4;
+  letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+}
+.year-button span { font-size: 10px; color: var(--muted); font-weight: 400; margin-left: 3px; vertical-align: super; }
+.year-button:hover { color: var(--emerald); }
+.year-button[aria-pressed="true"] { color: var(--emerald); border-bottom-color: var(--emerald); font-weight: 600; }
+.year-button[aria-pressed="true"] span { color: var(--emerald); }
+.publication-year[hidden] { display: none !important; }
+.paper-list { list-style: none; padding: 0; margin: 0; }
+.paper { display: grid; grid-template-columns: 28px minmax(0,1fr); gap: 22px; padding: 25px 0 27px; border-bottom: 1px solid var(--rule); }
+.paper-index { color: var(--emerald); font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; padding-top: 5px; }
+.paper-body { min-width: 0; }
+.paper-title { font-size: 16.5px; line-height: 1.68; font-weight: 500; }
+.paper-title a { text-decoration: none; text-decoration-thickness: 1px; text-decoration-color: transparent; text-underline-offset: 4px; }
+.paper-title a:hover { text-decoration-color: var(--emerald); color: var(--emerald); }
+.paper-authors { font-size: 14px; line-height: 1.75; margin: 9px 0 0; color: var(--muted); }
+.paper-authors strong { font-weight: 700; color: var(--ink); }
+.paper-journal { font-size: 13px; line-height: 1.6; margin: 4px 0 0; color: var(--muted); }
+.meta-sep { color: #939e98; padding-inline: 3px; }
+.no-link-title { color: var(--ink); }
+
+/* Contact and footer */
+.contact-content .email { font-size: 20px; text-decoration: underline; text-decoration-color: var(--emerald); text-underline-offset: 5px; font-weight: 500; overflow-wrap: anywhere; }
+.contact-content .email:hover { color: var(--emerald); }
+.contact-content .email span { font-size: 12px; }
+.contact-content p { color: var(--muted); font-size: 15px; margin: 17px 0 0; }
+.site-footer { border-top: 1px solid var(--rule); }
+.footer-inner { min-height: 76px; display: flex; gap: 20px; justify-content: space-between; align-items: center; }
+.footer-inner small, .footer-inner a { color: var(--muted); font-size: 12px; text-decoration: none; }
+
+@media (max-width: 850px) {
+  .section-grid { grid-template-columns: 1fr; gap: 33px; padding-block: 56px 67px; }
+  .hero { grid-template-columns: minmax(0,1fr) 175px; gap: 20px; }
+  .portrait { width: 174px; }
+}
+@media (max-width: 620px) {
+  body { font-size: 16px; }
+  .container { width: calc(100% - 40px); }
+  .header-inner { min-height: 63px; }
+  .site-nav { gap: 18px; }
+  .site-nav a { font-size: 13.5px; }
+  .hero { grid-template-columns: minmax(0,1fr) 118px; gap: 15px; min-height: 290px; padding-block: 52px 53px; }
+  .portrait { width: 116px; }
+  .affiliation { margin-bottom: 14px; font-size: 13px; }
+  .hero h1 { font-size: clamp(25px,5.7vw,32px); }
+  .name-en { font-size: 15px; margin-top: 5px; }
+  .specialty { font-size: 13px; margin: 17px 0 5px; }
+  .lab-link { font-size: 13px; }
+  .profile-links { margin-top: 20px; gap: 4px 18px; }
+  .profile-links a { font-size: 12.5px; }
+  .section-grid { gap: 26px; padding-block: 48px 61px; }
+  .section-heading h2 { font-size: 26px; }
+  .research-summary { grid-template-columns: 24px minmax(0,1fr) 21px; gap: 12px; padding-block: 19px; }
+  .research-title { font-size: 16px; line-height: 1.7; }
+  .research-index { font-size: 12px; }
+  .research-toggle { font-size: 21px; }
+  .research-expanded { margin-left: 30px; padding-left: 16px; }
+  .research-expanded { margin-left: 0; padding-left: 14px; }
+  .slide-gallery { gap: 12px; }
+  .related-list li { grid-template-columns: 35px minmax(0,1fr); gap: 12px; font-size: 13.5px; }
+  .related-block { margin-top: 25px; }
+  .year-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 15px; row-gap: 13px; }
+  .year-button { font-size: 17px; padding-bottom: 10px; text-align: left; }
+  .paper { grid-template-columns: 22px minmax(0,1fr); gap: 13px; padding-block: 20px 22px; }
+  .paper-title { font-size: 15px; }
+  .paper-authors { font-size: 13px; }
+  .paper-journal { font-size: 12px; }
+  .contact-content .email { font-size: 17px; }
+}
+@media (max-width: 390px) {
+  .container { width: calc(100% - 32px); }
+  .hero { grid-template-columns: minmax(0,1fr) 96px; gap: 11px; }
+  .portrait { width: 96px; }
+  .hero h1 { font-size: 25px; }
+  .specialty { font-size: 12px; }
+  .year-controls { column-gap: 10px; row-gap: 11px; }
+  .year-button { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,*::before,*::after { transition: none !important; animation: none !important; }
+}
+    }
+
+    /* Animated emerald ribbon (from the supplied Moonlit Tide reference). */
+/* Moonlit Tide-inspired, vertical ethereal silk animation.
+   Same layout as the previously anonymized v4 site.
+   The animated ribbon is an UNDERLAY, not a fixed side panel. */
+:root {
+  --fade-distance: 33.333vw;
+  --fade-solid: #fafaf8;
+  --veil-accent: #537da7;
+}
+body { position: relative; min-height:100vh; isolation: isolate; }
+#moonlit-background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--fade-solid);
+}
+#moonlit-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: min(760px, 54vw);
+  height: 100%;
+  display: block;
+}
+.moonlit-whitewash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right,
+    rgba(250,250,248,0) 0%,
+    rgba(250,250,248,.08) calc(var(--fade-distance) * .14),
+    rgba(250,250,248,.33) calc(var(--fade-distance) * .39),
+    rgba(250,250,248,.70) calc(var(--fade-distance) * .70),
+    rgba(250,250,248,.96) calc(var(--fade-distance) * .93),
+    var(--fade-solid) var(--fade-distance),
+    var(--fade-solid) 100%
+  );
+}
+.site-header, .section, .site-footer { background: transparent; }
+    /* Inherit the site's palette where available, keep the reference's cream. */
+    :root { --fade-solid: #fafaf8; }
+    body { background: transparent; }
+
+    @media (max-width: 620px) {
+      :root { --fade-distance: 46vw; }
+      #moonlit-canvas { width: 100vw; }
+      .moonlit-whitewash {
+        background: linear-gradient(to right,
+          rgba(250,250,248,0) 0%,
+          rgba(250,250,248,.28) calc(var(--fade-distance) * .4),
+          rgba(250,250,248,.77) calc(var(--fade-distance) * .78),
+          var(--fade-solid) var(--fade-distance),
+          var(--fade-solid) 100%);
+      }
+    }
+    @media print {
+      #moonlit-background { display: none; }
+      body { background: var(--fade-solid); }
+    }
+  </style>
+
 </head>
-<body>
+<body data-moonlit-theme="emerald">
+  <!-- Background-only canvas; not focusable and does not block interactions. -->
+  <div id="moonlit-background" aria-hidden="true">
+    <canvas id="moonlit-canvas"></canvas>
+    <div class="moonlit-whitewash"></div>
+  </div>
   <a class="skip-link" href="#main">本文へ移動</a>
   <header class="site-header" id="top">
     <div class="container header-inner">
@@ -109,6 +369,9 @@
         <div class="section-heading"><span class="section-num">02 /</span><h2 id="publications-heading">Publications</h2></div>
         <div class="section-content">
           <div class="year-controls" aria-label="論文の掲載年を切り替え"><button type="button" class="year-button" data-year="all" aria-pressed="false">All <span>25</span></button><button type="button" class="year-button" data-year="2026" aria-controls="pub-2026" aria-pressed="true">2026 <span>07</span></button><button type="button" class="year-button" data-year="2025" aria-controls="pub-2025" aria-pressed="false">2025 <span>08</span></button><button type="button" class="year-button" data-year="2024" aria-controls="pub-2024" aria-pressed="false">2024 <span>03</span></button><button type="button" class="year-button" data-year="2023" aria-controls="pub-2023" aria-pressed="false">2023 <span>04</span></button><button type="button" class="year-button" data-year="2022" aria-controls="pub-2022" aria-pressed="false">2022 <span>03</span></button></div>
+          <!-- 論文の追加: 該当年の .paper-list の先頭に <li class="paper">...</li> を追加。
+               番号・年別件数・All件数は自動更新されます。新しい年は .publication-year を複製し、
+               data-year="YYYY" と id="pub-YYYY" を変更してください。年タブも自動生成されます。 -->
           <div class="papers-container"><section class="publication-year" id="pub-2026" data-year="2026" aria-label="2026年の原著論文">
       <ol class="paper-list"><li class="paper" id="paper-01">
       <span class="paper-index" aria-hidden="true">01</span>
@@ -282,5 +545,307 @@
   </main>
   <footer class="site-footer"><div class="container footer-inner"><small>© 2026 Shiro Arata</small><a href="#top">Back to top ↑</a></div></footer>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "26d07c24a5f04fa39a5620a178c03e5c"}'></script><!-- End Cloudflare Web Analytics -->
+
+  <script>
+  /* Publications: derive labels, counts, ordering and visible numbering from entries.
+     To add a paper, insert one <li class="paper"> in its year's .paper-list.
+     To add a new year, duplicate a .publication-year section and change data-year
+     (and id). The year tab is created automatically. */
+  (() => {
+    'use strict';
+
+    const externalScript = document.querySelector('script[src="script.js"]');
+    if (externalScript) {
+      externalScript.addEventListener('load', () => {
+        externalScript.dataset.loaded = 'true';
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Keep accordions usable when this HTML is opened without script.js.
+      if (externalScript?.dataset.loaded !== 'true') {
+        const panels = Array.from(document.querySelectorAll('.research-panel'));
+        panels.forEach(panel => panel.addEventListener('toggle', () => {
+          if (panel.open) panels.forEach(other => {
+            if (other !== panel) other.open = false;
+          });
+        }));
+      }
+
+      const controls = document.querySelector('.year-controls');
+      const container = document.querySelector('.papers-container');
+      if (!controls || !container) return;
+
+      // New years appear at the top, irrespective of where the HTML was added.
+      const groups = Array.from(container.querySelectorAll(':scope > .publication-year'))
+        .sort((a, b) => Number(b.dataset.year) - Number(a.dataset.year));
+      groups.forEach(group => container.appendChild(group));
+
+      // Reuse existing buttons so event listeners in an optional script.js survive.
+      const existing = new Map(
+        Array.from(controls.querySelectorAll('.year-button'))
+          .map(button => [button.dataset.year, button])
+      );
+      const allButton = existing.get('all') || document.createElement('button');
+      const buttons = [allButton];
+      let total = 0;
+
+      function setLabel(button, label, count) {
+        const badge = document.createElement('span');
+        badge.textContent = String(count).padStart(2, '0');
+        button.replaceChildren(document.createTextNode(label + ' '), badge);
+      }
+
+      allButton.type = 'button';
+      allButton.classList.add('year-button');
+      allButton.dataset.year = 'all';
+      allButton.removeAttribute('aria-controls');
+
+      for (const group of groups) {
+        const year = group.dataset.year;
+        if (!year) continue;
+        const count = group.querySelectorAll('.paper-list > .paper').length;
+        total += count;
+        const button = existing.get(year) || document.createElement('button');
+        button.type = 'button';
+        button.classList.add('year-button');
+        button.dataset.year = year;
+        if (!group.id) group.id = 'pub-' + year;
+        button.setAttribute('aria-controls', group.id);
+        setLabel(button, year, count);
+        buttons.push(button);
+      }
+      setLabel(allButton, 'All', total);
+      controls.replaceChildren(...buttons);
+
+      function numberPapers(selectedYear) {
+        let number = 0;
+        for (const group of groups) {
+          // In 'All' mode the counter continues across years.
+          // In a single-year view every year starts at 01.
+          if (selectedYear !== 'all') number = 0;
+          for (const paper of group.querySelectorAll('.paper-list > .paper')) {
+            let index = paper.querySelector(':scope > .paper-index');
+            if (!index) {
+              index = document.createElement('span');
+              index.className = 'paper-index';
+              paper.prepend(index);
+            }
+            index.setAttribute('aria-hidden', 'true');
+            index.textContent = String(++number).padStart(2, '0');
+          }
+        }
+      }
+
+      function showYear(year) {
+        buttons.forEach(button => button.setAttribute(
+          'aria-pressed', String(button.dataset.year === year)
+        ));
+        groups.forEach(group => {
+          group.hidden = year !== 'all' && group.dataset.year !== year;
+        });
+        numberPapers(year);
+      }
+
+      // Delegation also covers automatically generated buttons for future years.
+      controls.addEventListener('click', event => {
+        const button = event.target.closest('.year-button');
+        if (button && controls.contains(button)) showYear(button.dataset.year);
+      });
+
+      // Select the latest year automatically (e.g., 2027 after it is added).
+      showYear(groups[0]?.dataset.year || 'all');
+    });
+  })();
+  </script>
+
+  <script>
+/* Vertical silk-ribbon field inspired by UX Pilot's Moonlit Tide (Ethereal Veil Lab).
+ * Custom Canvas 2D approximation, not code exported from UX Pilot.
+ * No dependencies or externally loaded images.
+ */
+(() => {
+  'use strict';
+  const canvas = document.getElementById('moonlit-canvas');
+  if (!canvas) return;
+  const context = canvas.getContext('2d', { alpha: false, desynchronized: true });
+  if (!context) return;
+  const theme = document.body.dataset.moonlitTheme || 'original';
+  const presets = {
+    original: {
+      paper: '#e9f2fc', haze: '#f4f8fd',
+      baseDark: '#abcbe6', baseLight: '#f3f8fc',
+      ribbonA: ['#172f62','#4169ab','#6d9fcc','#b6deee','#e8f8ff'],
+      ribbonB: ['#425591','#697cc1','#a0afe1','#d1d7f7','#f2f7ff'],
+      glow: '111,161,222', mist: '156,198,238', glint: '#f8ffff',
+      alpha: 1.04
+    },
+    emerald: {
+      paper: '#e8f5ef', haze: '#f8fcf8',
+      baseDark: '#bcdfd3', baseLight: '#f2faf6',
+      ribbonA: ['#075a50','#108876','#43bba4','#a4e2cf','#e6f9f2'],
+      ribbonB: ['#407f75','#69ac9c','#9dcfba','#cbecda','#f7fff9'],
+      glow: '91,172,149', mist:'153,217,192', glint:'#f9fff9',
+      alpha: .92
+    }
+  };
+  const C = presets[theme] || presets.original;
+  const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const TAU = Math.PI*2;
+  let W=0, H=0, scale=1, frame=0, start=0, running=false;
+  let prevTime=0;
+
+  function rgb(hex) {
+    return [parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)];
+  }
+  function colorMix(a,b,t) {
+    const aa=rgb(a), bb=rgb(b);
+    return 'rgb('+aa.map((v,i)=>Math.round(v*(1-t)+bb[i]*t)).join(',')+')';
+  }
+  function blendPalette(p,u) {
+    const q=Math.max(0,Math.min(.99999,u))*(p.length-1);
+    const i=Math.floor(q);
+    return colorMix(p[i],p[i+1],q-i);
+  }
+  function ellipseGlow(x,y,rx,ry,color,a) {
+    context.save(); context.translate(x,y); context.scale(rx,ry);
+    const gr=context.createRadialGradient(0,0,0,0,0,1);
+    gr.addColorStop(0, 'rgba('+color+','+a+')');
+    gr.addColorStop(.48,'rgba('+color+','+(a*.24)+')');
+    gr.addColorStop(1,'rgba('+color+',0)');
+    context.fillStyle=gr; context.beginPath(); context.arc(0,0,1,0,TAU); context.fill();
+    context.restore();
+  }
+  function resize() {
+    const rect=canvas.getBoundingClientRect();
+    W=Math.max(1,rect.width); H=Math.max(1,rect.height);
+    // Lower resolution keeps several hundred translucent filaments smooth on mobiles.
+    scale=Math.min(1.35, window.devicePixelRatio || 1);
+    canvas.width=Math.round(W*scale); canvas.height=Math.round(H*scale);
+    context.setTransform(scale,0,0,scale,0,0);
+    render(0);
+  }
+  /* Bending a woven strip in 3D-like projection: x depends on height, width
+     and a slowly varying fold. Strands converge at a crease then spread out. */
+  function sheetPos(y,u,which,t) {
+    const z=y/H;
+    const front=(which===0);
+    const phase=front ? -.48 : 1.68;
+    const cx=W*(front ? .265 : .072);
+    const bend=(front ? W*.118 : W*.08)*Math.sin(z*4.5 + phase + t*.62);
+    const bend2=W*.040*Math.sin(z*9.0 - phase*.45 - t);
+    const middle=cx+bend+bend2;
+    const half=W*(front ? .153 : .113);
+    const fullness=.80 + .18*Math.sin(z*6.2+phase-t*.7);
+    const twist=z*(front ? 5.55 : 4.9)+phase+t*(front ? .7 : -.55);
+    const projectedWidth=half*fullness*Math.cos(twist);
+    const lift=(1-u*u)*W*.034*Math.sin(z*7.6+phase+t*.7);
+    const shade=(u>0 ? 1: -.6)*Math.sin(twist);
+    return {x:middle + u*projectedWidth + lift, z:shade, fold:Math.abs(Math.cos(twist))};
+  }
+  function boundary(which, t, u) {
+    context.beginPath();
+    const steps=76;
+    for(let j=0;j<=steps;j++) {
+      const y=H*(-.19+1.38*j/steps), p=sheetPos(y,u,which,t);
+      if(j===0)context.moveTo(p.x,y);else context.lineTo(p.x,y);
+    }
+  }
+  function tissue(which,t) {
+    const p=which===0?C.ribbonA:C.ribbonB;
+    context.save();
+    // The broad translucent silhouette, rather than isolated neon lines.
+    context.beginPath();
+    const segs=88;
+    for(let i=0;i<=segs;i++) {
+      const y=H*(-.19+1.38*i/segs), q=sheetPos(y,-1,which,t);
+      if(i===0)context.moveTo(q.x,y);else context.lineTo(q.x,y);
+    }
+    for(let i=segs;i>=0;i--) {
+      const y=H*(-.19+1.38*i/segs), q=sheetPos(y,1,which,t);
+      context.lineTo(q.x,y);
+    }
+    context.closePath();
+    const center=W*(which===0?.27:.09);
+    const g=context.createLinearGradient(center-W*.18,0,center+W*.18,0);
+    g.addColorStop(0,p[0]);g.addColorStop(.32,p[1]);g.addColorStop(.66,p[3]);g.addColorStop(1,p[4]);
+    context.globalAlpha=(which===0?.18:.12)*C.alpha;
+    context.fillStyle=g;
+    context.fill();
+
+    // Many organza-like light threads form folded highlights.
+    const n=which===0?310:230;
+    const samples=which===0?85:70;
+    for(let i=0;i<n;i++) {
+      const u=(i/(n-1))*2-1;
+      const v=(u+1)/2;
+      const edge=Math.pow(Math.abs(u),8);
+      const harmonic=Math.sin(v*22.4+which*1.65);
+      const lightness=.42 + .24*Math.sin(v*12.5 + t*.65) + edge*.65;
+      const opacity=((which===0?.105:.075) + .085*lightness + (edge*.11))*C.alpha;
+      context.globalAlpha=opacity;
+      context.strokeStyle=blendPalette(p, .18+v*.72);
+      context.lineWidth=(edge>0.77?.82:.60);
+      context.beginPath();
+      for(let k=0;k<=samples;k++) {
+        const y=H*(-.19+1.38*k/samples);
+        const point=sheetPos(y,u,which,t);
+        // Slight rippling within strands gives flowing silk rather than thick tubes.
+        const detail = Math.sin(k*.24 + u*13 + t*1.45 + which)*(.75+(1-Math.abs(u))*1.9);
+        const x=point.x+detail;
+        if(k===0)context.moveTo(x,y);else context.lineTo(x,y);
+      }
+      context.stroke();
+    }
+
+    // Fine, sparkling pleat creases. Their width follows the ribbon's perspective.
+    context.globalAlpha=(which===0?.63:.40)*C.alpha;
+    context.strokeStyle=C.glint;
+    context.lineWidth=.75;
+    for (const u of [-.975,-.67,.52,.965]) {
+      boundary(which,t,u);context.stroke();
+    }
+    context.restore();
+  }
+  function render(seconds) {
+    if(!W || !H)return;
+    const t=TAU*seconds/17;
+    context.clearRect(0,0,W,H);
+    const ground=context.createLinearGradient(0,0,W*.96,H*.24);
+    ground.addColorStop(0,C.paper);
+    ground.addColorStop(.36,C.baseDark);
+    ground.addColorStop(.78,C.haze);
+    ground.addColorStop(1,C.baseLight);
+    context.fillStyle=ground; context.fillRect(0,0,W,H);
+    // Off-axis washes create a softly illuminated, paper-like backdrop.
+    ellipseGlow(W*.15,H*.27,W*.38,H*.46,C.mist,.28);
+    ellipseGlow(W*.40,H*.75,W*.32,H*.39,C.glow,.16);
+    ellipseGlow(W*.015,H*.62,W*.22,H*.56,C.mist,.13);
+    tissue(1,t+0.13);
+    tissue(0,t);
+    // Broad highlights on folds, but no glows or particles like cyber effects.
+    context.save();context.globalCompositeOperation='screen';
+    ellipseGlow(W*(.17+.05*Math.sin(t+.4)),H*.24,W*.18,H*.20,C.glow,.10);
+    ellipseGlow(W*(.20+.045*Math.sin(t*1.4)),H*.77,W*.16,H*.23,C.glow,.12);
+    context.restore();
+  }
+  function drawFrame(now) {
+    if(!running || document.hidden){frame=0;return;}
+    if(!start) start=now;
+    if(now-prevTime>29) {render((now-start)/1000);prevTime=now;}
+    frame=requestAnimationFrame(drawFrame);
+  }
+  function sync() {
+    cancelAnimationFrame(frame);frame=0;
+    running=!media.matches;
+    if (running && !document.hidden) {start=performance.now();frame=requestAnimationFrame(drawFrame);}
+    else render(0);
+  }
+  window.addEventListener('resize',resize,{passive:true});
+  document.addEventListener('visibilitychange',sync);
+  if(media.addEventListener) media.addEventListener('change',sync);
+  resize();sync();
+})();
+  </script>
 </body>
 </html>
